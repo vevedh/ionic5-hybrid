@@ -1,0 +1,7 @@
+{
+  "name": "ionic5-hybrid",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
