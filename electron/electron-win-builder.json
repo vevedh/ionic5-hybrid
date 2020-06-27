@@ -1,0 +1,69 @@
+{
+    "productName": "ionic5-hybrid",
+    "artifactName": "${productName}-${version}.${ext}",
+    "copyright": "Copyright © 2019 Hervé de CHAVIGNY",
+    "asar": false,
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://127.0.0.1:3030/uploads/"
+      }
+    ],
+    "appId": "io.ionic5-hybrid.starter",
+    "files": [
+        "**/*",
+        "!**/*.ts",
+        "!*.code-workspace",
+        "!LICENSE.md",
+        "!package.json",
+        "!package-lock.json",
+        "!src/",
+        "!e2e/",
+        "!hooks/",
+        "!angular.json",
+        "!_config.yml",
+        "!karma.conf.js",
+        "!tsconfig.json",
+        "!tslint.json"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "requestedExecutionLevel": "highestAvailable",
+      "target": [
+        "nsis"
+      ]
+    },
+    "squirrelWindows": {
+      "msi": "true"
+    },
+    "msi": {
+      "warningsAsErrors": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "createStartMenuShortcut": true,
+      "packElevateHelper": true,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true
+    },
+    "extraFiles": [
+      "splash_assets/**/*"
+    ],
+    "appx": {
+      "publisherDisplayName": "ionic5-hybrid"
+    },
+    "mac": {
+      "icon": "icon.icns",
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "icon": "dist",
+      "target": [
+        "rpm",
+        "deb",
+        "AppImage"
+      ]
+    }
+  }
