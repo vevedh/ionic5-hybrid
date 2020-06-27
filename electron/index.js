@@ -18,6 +18,7 @@ const powershell = require('node-powershell');
 //-----  gestion de fichiers
 const jetpack = require('fs-jetpack');
 
+const serve = /--serve/.test(process.argv[2]);
 
 const appVersion = app.getVersion();
 
@@ -143,14 +144,20 @@ async function createWindow () {
     mainWindow.webContents.openDevTools();
   }
 
-  if(useSplashScreen) {
-    splashScreen = new CapacitorSplashScreen(mainWindow);
-    splashScreen.init();
+
+
+  if (serve) {
+    mainWindow.loadURL('http://localhost:4200')
   } else {
-    mainWindow.loadURL(`file://${__dirname}/app/index.html`);
-    mainWindow.webContents.on('dom-ready', () => {
-      mainWindow.show();
-    });
+    if(useSplashScreen) {
+      splashScreen = new CapacitorSplashScreen(mainWindow);
+      splashScreen.init();
+    } else {
+      mainWindow.loadURL(`file://${__dirname}/app/index.html`);
+      mainWindow.webContents.on('dom-ready', () => {
+        mainWindow.show();
+      });
+    }
   }
 
   // icone dans la barre des tâches
@@ -205,6 +212,8 @@ async function createWindow () {
 
 
 }
+
+
 
 
 app.allowRendererProcessReuse = true;
