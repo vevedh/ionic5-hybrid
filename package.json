@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~10.0.1",
     "@angular/platform-browser-dynamic": "~10.0.1",
     "@angular/router": "~10.0.1",
+    "@capacitor-community/electron": "^0.3.0",
     "@capacitor/core": "2.2.0",
     "@ionic-native/core": "^5.0.7",
     "@ionic-native/splash-screen": "^5.0.0",
