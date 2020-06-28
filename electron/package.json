@@ -4,9 +4,10 @@
   "description": "An Amazing Ionic Capacitor App Electron",
   "main": "index.js",
   "scripts": {
-    "electron:start": "npm-run-all -p web:local electron:dev",
+    "electron:start": "electron ./",
+    "electron:startdev": "npm-run-all -p web:local electron:dev",
     "electron:dev": "wait-on http-get://localhost:4200/ && electron ./  --serve",
-    "web:local":"cd ../ && ng run app:serve --host=localhost --port=4200",
+    "web:local": "cd ../ && ng run app:serve --host=localhost --port=4200",
     "electron:build": "electron-builder build",
     "electron:mac": "electron-packager ./electron ionic5-hybrid --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
     "electron:win": "electron-packager ./electron ionic5-hybrid --overwrite --asar=true --platform=win32"
@@ -19,7 +20,8 @@
     "mongodb": "^3.5.9",
     "node-powershell": "^4.0.0",
     "npm-run-all": "^4.1.5",
-    "systeminformation": "^4.26.9"
+    "systeminformation": "^4.26.9",
+    "wait-on": "^5.0.1"
   },
   "devDependencies": {
     "electron": "^8.0.0",

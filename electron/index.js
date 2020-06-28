@@ -5,6 +5,9 @@ const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron'
 
 const path = require('path');
 
+// ----- class par defaut pour le menu de l'application
+const appmenu = require('./appmenu');
+
 //---- librairie qui permet d'avoir les infos système
 const si = require('systeminformation');
 
@@ -161,7 +164,7 @@ async function createWindow () {
   }
 
   // icone dans la barre des tâches
-  trayIcon = new Tray(nativeImage.createFromPath(path.join(__dirname, '/icon1.png')));
+  trayIcon = new Tray(nativeImage.createFromPath(path.join(__dirname, '/icons/png/512x512.png')));
   trayIcon.on('right-click', toggleWindow)
   trayIcon.on('double-click', toggleWindow)
   trayIcon.on('click', function (event) {
@@ -176,7 +179,7 @@ async function createWindow () {
 
       // initialisation des menus
   mainWindow.setMenu(null);
-  //Menu.setApplicationMenu(appmenu.appMenu());
+  Menu.setApplicationMenu(appmenu.appMenu());
   //appmenu.addUpdateMenuItems(Menu.getApplicationMenu().items,1);
   //appmenu.findReopenMenuItem();
   mainWindow.webContents.on("did-start-navigation", (event, url) => {

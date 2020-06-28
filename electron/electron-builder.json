@@ -35,23 +35,23 @@
       "allowToChangeInstallationDirectory": true,
       "allowElevation": true
     },
-  "win": {
-    "icon": "icon.ico",
-    "requestedExecutionLevel": "highestAvailable",
-    "target": [
-      "portable"
-    ]
-  },
-  "mac": {
-    "icon": "icon.icns",
-    "target": [
-      "dmg"
-    ]
-  },
-  "linux": {
-    "icon": "icon.ico",
-    "target": [
-      "AppImage"
-    ]
-  }
+    "win": {
+      "icon": "icons/win/icon.ico",
+      "requestedExecutionLevel": "highestAvailable",
+      "target": [
+        "portable"
+      ]
+    },
+    "mac": {
+      "icon": "icons/mac/icon.icns",
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "icon": "icons/png/16x16.png",
+      "target": [
+        "AppImage"
+      ]
+    }
 }
