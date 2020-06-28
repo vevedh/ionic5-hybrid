@@ -1,16 +1,18 @@
-import { app } from "electron";
+import { app, Menu, screen, nativeImage, Tray, ipcMain, dialog } from "electron";
 import { createCapacitorElectronApp } from "@capacitor-community/electron-core";
 
 const isDev = require('electron-is-dev');
 
-console.log('Dev :', isDev);
+const log = require("electron-log");
+
+log.info('Dev :', isDev);
 
 //---   arguments possible de l'application
 //---  soit --serve  ou --debug
 const serve = /--serve/.test(process.argv[2]);
 const debug = /--debug/.test(process.argv[2]);
 
-console.log(`Start application using --serve `, serve);
+log.info(`Start application using --serve `, serve);
 
 // The MainWindow object can be accessed via myCapacitorApp.getMainWindow()
 const myCapacitorApp = createCapacitorElectronApp();
@@ -29,12 +31,12 @@ app.on("ready", () => {
   myCapacitorApp.init();
 
   if (serve) {
-    console.log("Using Serve")
+    log.info("Using Serve")
   }
 
 
   myCapacitorApp.getMainWindow().webContents.on("did-start-navigation", (event, url) => {
-    console.log("navigation url :", url);
+    log.info("navigation url :", url);
   });
 
 });
