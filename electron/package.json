@@ -33,7 +33,37 @@
   "author": "",
   "license": "MIT",
   "build": {
-    "appId": "com.example.capacitor-app",
+    "appId": "io.ionic5-hybrid.starter",
+    "files": [
+        "**/*",
+        "build/index.js",
+        "!**/*.ts",
+        "!*.code-workspace",
+        "!LICENSE.md",
+        "!package.json",
+        "!package-lock.json",
+        "!src/",
+        "!e2e/",
+        "!hooks/",
+        "!angular.json",
+        "!_config.yml",
+        "!karma.conf.js",
+        "!tsconfig.json",
+        "!tslint.json"
+    ],
+    "squirrelWindows": {
+      "msi": "true"
+    },
+    "msi": {
+      "warningsAsErrors": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "createStartMenuShortcut": true,
+      "packElevateHelper": true,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true
+    },
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": "dmg",
@@ -41,7 +71,14 @@
     },
     "win": {
       "target": "nsis",
+      "requestedExecutionLevel": "highestAvailable",
       "icon": "appIcon.png"
+    },
+    "linux": {
+      "icon": "appIcon.png",
+      "target": [
+        "AppImage"
+      ]
     }
   }
 }

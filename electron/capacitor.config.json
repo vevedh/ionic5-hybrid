@@ -5,8 +5,8 @@
   "npmClient": "npm",
   "webDir": "www",
   "server": {
-    "url": "http://localhost:4200",
-    "hostname":"localhost"
+    "url": null,
+    "hostname": null
   },
   "plugins": {
     "SplashScreen": {
