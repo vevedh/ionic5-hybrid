@@ -15,16 +15,16 @@ const isDev = require("electron-is-dev");
 
 const path = require("path");
 
-const log = require("electron-log");
+const loggger = require("electron-log");  // require('electron-timber');
 
-log.info("Dev :", isDev);
+loggger.info("Dev :", isDev);
 
 // ---   arguments possible de l'application
 // ---  soit --serve  ou --debug
 const serve = /--serve/.test(process.argv[2]);
 const debug = /--debug/.test(process.argv[2]);
 
-log.info(`Start application using --serve `, serve);
+loggger.info(`Start application using --serve `, serve);
 
 // The MainWindow object can be accessed via myCapacitorApp.getMainWindow()
 const myCapacitorApp = createCapacitorElectronApp();
@@ -64,7 +64,7 @@ let app_context_menu = [
     click: () => {
       willQuitApp = true;
       if (process.platform != "darwin")
-        log.info("Nombre de process : ", pids.length);
+        loggger.info("Nombre de process : ", pids.length);
       pids.forEach((proc) => {
         proc.kill();
       });
@@ -109,11 +109,11 @@ app.on("ready", () => {
   }
 
   if (serve) {
-    log.info("Using Serve");
+    loggger.info("Using Serve");
   }
 
   mainWindow.webContents.on("did-start-navigation", (event, url) => {
-    log.info("navigation url :", url);
+    loggger.info("navigation url :", url);
   });
 
   mainWindow.on("close", (e) => {
@@ -126,7 +126,7 @@ app.on("ready", () => {
       });
       mainWindow = null;
     } else {
-      log.info("Event close ", willQuitApp);
+      loggger.info("Event close ", willQuitApp);
       e.preventDefault();
       mainWindow.hide();
     }

@@ -5,7 +5,7 @@
   "npmClient": "npm",
   "webDir": "www",
   "server": {
-    "url": null,
+    "url": null, 
     "hostname": null
   },
   "plugins": {
