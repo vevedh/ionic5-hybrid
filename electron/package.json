@@ -67,15 +67,15 @@
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": "dmg",
-      "icon": "appIcon.png"
+      "icon": "assets/appIcon.png"
     },
     "win": {
       "target": "nsis",
       "requestedExecutionLevel": "highestAvailable",
-      "icon": "appIcon.png"
+      "icon": "assets/appIcon.png"
     },
     "linux": {
-      "icon": "appIcon.png",
+      "icon": "assets/appIcon.png",
       "target": [
         "AppImage"
       ]
