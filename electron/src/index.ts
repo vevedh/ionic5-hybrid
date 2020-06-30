@@ -9,7 +9,10 @@ import {
   BrowserWindow,
   MenuItem,
 } from "electron";
-import { createCapacitorElectronApp } from "@capacitor-community/electron-core";
+import { createCapacitorElectronApp , CapacitorElectronApp} from "@capacitor-community/electron-core";
+
+
+
 
 const isDev = require("electron-is-dev");
 
@@ -27,7 +30,15 @@ const debug = /--debug/.test(process.argv[2]);
 loggger.info(`Start application using --serve `, serve);
 
 // The MainWindow object can be accessed via myCapacitorApp.getMainWindow()
-const myCapacitorApp = createCapacitorElectronApp();
+const myCapacitorApp: CapacitorElectronApp = createCapacitorElectronApp({
+  splashScreen:{
+    splashOptions:{
+      loadingText: "Chargement en cours..."
+    }
+  }
+});
+
+
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
