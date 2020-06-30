@@ -1,11 +1,5 @@
-
 import { Component } from '@angular/core';
 
-
-//import { PowershellPlugin } from 'cap-powershell';
-import { Capacitor , Plugins } from '@capacitor/core'
-
-const { PowershellPlugin } = Plugins;
 
 @Component({
   selector: 'app-tab1',
@@ -21,10 +15,8 @@ export class Tab1Page {
 
   ionViewDidEnter(){
    
-    console.log("Powershell Obj :", Capacitor)
-    if (Capacitor.platform == "electron") {
-      PowershellPlugin.echo("Bonjour");
-    }
+    
+    
   }
 
 }
