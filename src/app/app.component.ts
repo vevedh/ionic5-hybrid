@@ -33,7 +33,7 @@ export class AppComponent {
 
       if (Capacitor.platform == "electron") {
         console.log("Capacitor Electron chargé!",Plugins);
-        PowershellPlugin.echo({ value: 'test de veve'}).then((val)=>{
+        Plugins.PowershellPlugin.echo('test de veve').then((val)=>{
           console.log("Result :",val);
         })
         
