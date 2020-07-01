@@ -6,11 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { PowershellPlugin} from 'cap-powershell';
 import { Capacitor, Plugins } from '@capacitor/core';
-//import { PowershellPlugin } from "cap-powershell";
 
-//import { registerWebPlugin } from "@capacitor/core";
-//registerWebPlugin(PowershellPlugin);
-//const { PowershellPlugin } = Plugins;
 
 @Component({
   selector: 'app-root',
@@ -35,8 +31,11 @@ export class AppComponent {
         console.log("Capacitor Electron chargé!",Plugins);
         Plugins.PowershellPlugin.echo('test de veve').then((val)=>{
           console.log("Result :",val);
-        })
-        
+        });
+
+        Plugins.PowershellPlugin.runPowerShell(`Get-Process`).then((value)=>{
+          console.log("Get-Process :",value);
+        })        
       }
     });
   }

@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "electron:start": "ng run app:build --base-href=./ && npx cap copy && cd ./electron && npm run electron:start",
+    "electron:startdev": "cd ./electron && npm run electron:startdev",
     "update-electron": "cd ./node_modules/@capacitor-community/electron && npm run capacitor:update",
     "start": "ng serve",
     "build": "ng build",
