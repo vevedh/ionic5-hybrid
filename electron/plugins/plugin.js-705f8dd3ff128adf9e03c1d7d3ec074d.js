@@ -2072,8 +2072,14 @@ var capacitorPlugin = (function (exports) {
             this.Path = null;
             this.NodeFs = null;
             this.RemoteRef = null;
+            this.PowerShellRef = null;
             console.log("PowershellPlugin");
             this.RemoteRef = remote;
+            this.PowerShellRef = new powershell({
+                executionPolicy: 'Bypass',
+                outputEncoding: 'utf-8',
+                noProfile: true
+            });
             this.Path = require("path");
             this.NodeFs = require("fs");
         }
@@ -2085,20 +2091,17 @@ var capacitorPlugin = (function (exports) {
         }
         runPowerShell(cmd) {
             return __awaiter(this, void 0, void 0, function* () {
-                var psw = new powershell({
-                    executionPolicy: 'Bypass',
-                    outputEncoding: 'utf-8',
-                    noProfile: true
-                });
+                const pws = this.PowerShellRef;
                 return new Promise(function (resolve, reject) {
-                    psw.addCommand(`$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding`);
-                    psw.addCommand(cmd)
-                        .then(() => psw.invoke()
+                    pws.addCommand(`$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding`);
+                    pws.addCommand(cmd)
+                        .then(() => pws.invoke()
                         .then((res) => {
                         //log.info("Résulat brut :",res);
-                        psw.dispose();
+                        //this.PowerShellRef.dispose();
                         resolve(res);
                     }, (reason) => {
+                        //this.PowerShellRef.dispose();
                         reject(reason);
                     }));
                 });

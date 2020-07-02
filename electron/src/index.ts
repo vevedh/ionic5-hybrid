@@ -29,7 +29,22 @@ loggger.info(`Start application using --serve `, serve);
 
 
 // The MainWindow object can be accessed via myCapacitorApp.getMainWindow()
-const myCapacitorApp = createCapacitorElectronApp();
+const myCapacitorApp = createCapacitorElectronApp({
+  trayMenu: {
+    useTrayMenu: true,
+    trayIconPath: path.join(
+      app.getAppPath(),
+      "assets",
+      process.platform === "win32" ? "appIcon.ico" : "appIcon.png"
+    ),
+    trayContextMenu: [new MenuItem({ label: "Quitter", role: "quit" })],
+  },
+  splashScreen:{
+    splashOptions:{
+      loadingText: "Chargement en cours..."
+    }
+  }
+});
 
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -38,43 +53,12 @@ app.disableHardwareAcceleration();
 app.allowRendererProcessReuse = true;
 
 let mainWindow: BrowserWindow;
-let trayIcon = null;
-let traymenu: Menu;
 let willQuitApp = false;
 let pids = [];
 let appPath;
+let trayIcon : Tray = null;
 
-const toggleWindow = () => {
-  if (mainWindow.isVisible()) {
-    mainWindow.hide();
-  } else {
-    showWindow();
-  }
-};
 
-const showWindow = () => {
-  mainWindow.show();
-  mainWindow.focus();
-};
-
-/**
- *   Context Menu
- */
-let app_context_menu = [
-  {
-    label: "Quitter",
-    accelerator: "CmdOrCtrl+Q",
-    click: () => {
-      willQuitApp = true;
-      if (process.platform != "darwin")
-        loggger.info("Nombre de process : ", pids.length);
-      pids.forEach((proc) => {
-        proc.kill();
-      });
-      app.quit();
-    },
-  },
-];
 
 
 // This method will be called when Electron has finished
@@ -85,29 +69,15 @@ app.on("ready", () => {
 
   
   mainWindow = myCapacitorApp.getMainWindow();
-  
-  // icone dans la barre des tâches
-  trayIcon = new Tray(
-    nativeImage.createFromPath(
-      path.join(
-        app.getAppPath(),
-        "assets",
-        process.platform === "win32" ? "appIcon.ico" : "appIcon.png"
-      )
-    )
-  ); 
-  trayIcon.on("right-click", toggleWindow);
-  trayIcon.on("double-click", toggleWindow);
-  trayIcon.on("click", (event) => {
-    toggleWindow();
-  });
 
-  traymenu = Menu.buildFromTemplate(app_context_menu);
-  trayIcon.setToolTip(app.getName());
-  trayIcon.setContextMenu(traymenu);
+  // The TrayIcon object can be accessed via myCapacitorApp.getTrayIcon()
+  trayIcon = myCapacitorApp.getTrayIcon();
+
+  console.log("TrayIcon :",trayIcon);
 
   // initialisation des menus
-  mainWindow.setMenu(null);
+  //mainWindow.setMenu(null);
+
   if (isDev) {
     // Menu.setApplicationMenu(appmenu.appMenu());
   }
@@ -120,6 +90,7 @@ app.on("ready", () => {
     loggger.info("navigation url :", url);
   });
 
+  
   mainWindow.on("close", (e) => {
     // willQuitApp = true;
     if (willQuitApp) {
@@ -135,7 +106,9 @@ app.on("ready", () => {
       mainWindow.hide();
     }
   });
+  
 });
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function () {

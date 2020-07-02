@@ -14,7 +14,8 @@
     "electron:build-mac": "npm run build && electron-builder build --mac"
   },
   "dependencies": {
-    "@capacitor-community/electron-core": "latest",
+    "@capacitor-community/electron-core": "file:../../capacitor-electron/electron-core",
+    "electron-is-dev": "^1.2.0",
     "electron-log": "^4.2.2"
   },
   "devDependencies": {
