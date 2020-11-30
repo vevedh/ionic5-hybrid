@@ -1,29 +1,26 @@
 {
-  "name": "ionic5-hybrid",
+  "name": "ionic5hybrid",
   "version": "1.0.0",
-  "description": "An Amazing Capacitor App",
+  "description": "Ionic5hybrid Capacitor App",
   "main": "./build/index.js",
   "scripts": {
     "build": "tsc",
     "electron:start": "npm run build && electron ./",
-    "electron:startdev": "npm-run-all -p web:local electron:dev",
-    "electron:dev": "wait-on http-get://localhost:4200/ && npm run build && electron ./",
-    "web:local": "cd ../ && ng run app:serve --host=localhost --port=4200",
     "electron:pack": "npm run build && electron-builder build --dir",
     "electron:build-windows": "npm run build && electron-builder build --windows",
     "electron:build-mac": "npm run build && electron-builder build --mac"
   },
   "dependencies": {
-    "@capacitor-community/electron-core": "file:../../capacitor-electron/electron-core",
+    "@capacitor-community/electron": "^1.3.1",
     "electron-is-dev": "^1.2.0",
-    "electron-log": "^4.2.2"
+    "electron-log": "^4.3.0",
+    "path": "^0.12.7",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "electron": "~9.0.3",
-    "electron-builder": "~22.7.0",
-    "npm-run-all": "^4.1.5",
-    "typescript": "~3.9.5",
-    "wait-on": "^5.0.1"
+    "electron": "^11.0.1",
+    "electron-builder": "^22.9.1",
+    "typescript": "~4.0.5"
   },
   "keywords": [
     "capacitor",
@@ -32,7 +29,18 @@
   "author": "",
   "license": "MIT",
   "build": {
-    "appId": "com.example.capacitor-app",
+    "appId": "io.ionic5hybrid.starter",
+    "productName": "Ionic5CapApp",
+    "files": [
+      "assets/*",
+      "build/*",
+      "preloader.js",
+      "plugins/*",
+      "server/**",
+      "!server/node_modules",
+      "capacitor.config.json",
+      "app/**"
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": "dmg",
@@ -40,7 +48,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "appIcon.png"
+      "icon": "appIcon.ico"
     }
   }
 }

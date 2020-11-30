@@ -4,8 +4,9 @@ import { Platform, LoadingController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
-//import { PowershellPlugin} from 'cap-powershell';
+
 import { Capacitor, Plugins } from '@capacitor/core';
+import { PowershellPluginWeb } from 'cap-powershell';
 
 
 const { PowershellPlugin } = Plugins
@@ -16,6 +17,8 @@ const { PowershellPlugin } = Plugins
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
+
+  
   loading: HTMLIonLoadingElement;
 
 
@@ -31,26 +34,31 @@ export class AppComponent {
 
 
 
-  initializeApp() {
-    this.platform.ready().then(() => {
+   initializeApp() {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
       if (Capacitor.platform == "electron") {
         console.log("Capacitor Electron chargé!",Plugins);
-        /*PowershellPlugin.runPowerShell(`Get-Process | convertTo-Json`).then((value)=>{
-          console.log("Get-Process :",value);
-        }) */
 
-        this.presentLoading();
-        Plugins.PowershellPlugin.runPowerShell(`Get-Process | convertTo-Json`).then((value) => {
-          this.hideLoading();
-          console.log("Get-Process :",value);
-        }) 
+        
 
-        PowershellPlugin.echo('test de veve').then((val)=>{
-          console.log("Result :",val);
-        });
+
+        PowershellPlugin.SysInfosRef.chassis().then((infos)=>{
+          console.log("System info :",infos)
+        })
+        
+        //Get-ADDomainController –Discover
+        //if ((Get-Module -ListAvailable -Name "ActiveDirectory") ) { write-output $true } else { write-output $false }
+        await this.presentLoading();
+        PowershellPlugin.runPowerShell(`Import-Module -Name ActiveDirectory`).then(async (value) => {
+          await this.hideLoading();
+          console.log("Get-ADDomain :",value);
+        }).catch(async (err) => {
+          await this.hideLoading();
+          console.log("Get-ADDomain Error :",err);
+        })
 
              
       }
@@ -59,16 +67,16 @@ export class AppComponent {
 
 async presentLoading() {
   this.loading = await this.loadingController.create({
-    message: 'Hellooo',
-    duration: 20000,
+    message: 'Chargement en cours...',
+    //duration: 20000,
     spinner: 'bubbles'
   });
   this.loading.present();
 }
 
-hideLoading() {
+async hideLoading() {
   if (this.loading) {
-    this.loading.dismiss();
+    await this.loading.dismiss();
   }
 }
 

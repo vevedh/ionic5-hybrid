@@ -9,14 +9,13 @@ import {
   BrowserWindow,
   MenuItem,
 } from "electron";
-import { createCapacitorElectronApp } from "@capacitor-community/electron-core";
-
+import { createCapacitorElectronApp } from "@capacitor-community/electron";
 
 const isDev = require("electron-is-dev");
 
 const path = require("path");
 
-const loggger = require("electron-log");  // require('electron-timber');
+const loggger = require('winston'); //require("electron-log");  // require('electron-timber');
 
 loggger.info("Dev :", isDev);
 
@@ -26,7 +25,11 @@ const serve = /--serve/.test(process.argv[2]);
 const debug = /--debug/.test(process.argv[2]);
 
 loggger.info(`Start application using --serve `, serve);
+loggger.info('Path :',app.getAppPath());
 
+console.log('Path :',app.getAppPath());
+
+//loggger.info('Path :', path.resolve(path.join(app.getAppPath(),'../..','svrapis/src/app.js')) );
 
 // The MainWindow object can be accessed via myCapacitorApp.getMainWindow()
 const myCapacitorApp = createCapacitorElectronApp({
@@ -37,12 +40,19 @@ const myCapacitorApp = createCapacitorElectronApp({
       "assets",
       process.platform === "win32" ? "appIcon.ico" : "appIcon.png"
     ),
-    trayContextMenu: [new MenuItem({ label: "Quitter", role: "quit" })],
-  },
-  splashScreen:{
-    splashOptions:{
-      loadingText: "Chargement en cours..."
-    }
+    trayContextMenu: [new MenuItem({
+       label: "Quitter",
+        accelerator: 'CmdOrCtrl+Q',
+        click: () => {
+          willQuitApp = true;
+          if (process.platform != 'darwin')
+            console.log("Nombre de process = ", pids.length);
+            pids.forEach((proc) => {
+              proc.kill();
+            });
+            app.quit();
+        }
+      })],
   }
 });
 
@@ -55,11 +65,17 @@ app.allowRendererProcessReuse = true;
 let mainWindow: BrowserWindow;
 let willQuitApp = false;
 let pids = [];
+let proc = null;
 let appPath;
 let trayIcon : Tray = null;
 
 
+const startSvrFeatherJS = () => {
+  
+  
 
+  
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -68,18 +84,20 @@ app.on("ready", () => {
   myCapacitorApp.init();
 
   
+  
   mainWindow = myCapacitorApp.getMainWindow();
 
   // The TrayIcon object can be accessed via myCapacitorApp.getTrayIcon()
   trayIcon = myCapacitorApp.getTrayIcon();
 
-  console.log("TrayIcon :",trayIcon);
+  loggger.log("TrayIcon :",trayIcon);
 
   // initialisation des menus
   //mainWindow.setMenu(null);
 
   if (isDev) {
     // Menu.setApplicationMenu(appmenu.appMenu());
+    //startSvrFeatherJS();
   }
 
   if (serve) {
@@ -92,18 +110,28 @@ app.on("ready", () => {
 
   
   mainWindow.on("close", (e) => {
-    // willQuitApp = true;
+    
+     //willQuitApp = true;
     if (willQuitApp) {
       // server.close();
-      console.log("Nombre de process = ", pids.length);
+      console.log("Nombre de process to kill = ", pids.length);
+      proc.destroy().then(() => {
+        console.log('Destroyed!')
+      })
       pids.forEach((proc) => {
-        proc.kill();
+        //console.log('proc :',proc)
+        //proc.kill();
+        proc.destroy().then(() => {
+          console.log('Destroyed!')
+        })
       });
       mainWindow = null;
     } else {
       loggger.info("Event close ", willQuitApp);
+      
       e.preventDefault();
       mainWindow.hide();
+     
     }
   });
   

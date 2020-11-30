@@ -1,9 +1,12 @@
 {
-  "appId": "io.ionic5-hybrid.starter",
-  "appName": "ionic5-hybrid",
+  "appId": "io.ionic5hybrid.starter",
+  "appName": "ionic5hybrid",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
+  "server": {
+    "url":"http://localhost:8100"
+  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
