@@ -12,6 +12,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyIonicModule } from '@ngx-formly/ionic';
 import { VvService } from './services/vv.service';
+import { AuthGuard } from './guards/auth.guard';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +22,8 @@ import { VvService } from './services/vv.service';
   providers: [
     StatusBar,
     SplashScreen,
+    AuthGuard,
+    AuthService,
     VvService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

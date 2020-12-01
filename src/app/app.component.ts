@@ -47,14 +47,6 @@ export class AppComponent {
         console.log("Featherjs :",this.vvservice.feathers)
         
 
-
-        PowershellPlugin.SysInfosRef.chassis().then((infos)=>{
-          console.log("Chassis info :",infos)
-        })
-
-        PowershellPlugin.SysInfosRef.system().then((infos)=>{
-          console.log("System info :",infos)
-        })
         
         /*
         //Get-ADDomainController –Discover
@@ -89,7 +81,10 @@ async hideLoading() {
 }
 
 
-ionViewDidEnter(){
+async ionViewDidEnter(){
+
+  await this.hideLoading();
+  
   if (Capacitor.platform == "electron") {
       
   }
