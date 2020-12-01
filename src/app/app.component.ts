@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { Capacitor, Plugins } from '@capacitor/core';
 import { PowershellPluginWeb } from 'cap-powershell';
+import { VvService } from './services/vv.service';
 
 
 const { PowershellPlugin } = Plugins
@@ -27,7 +28,8 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private loadingController: LoadingController,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private vvservice: VvService
   ) {
     this.initializeApp();
   }
@@ -42,17 +44,23 @@ export class AppComponent {
       if (Capacitor.platform == "electron") {
         console.log("Capacitor Electron chargé!",Plugins);
 
+        console.log("Featherjs :",this.vvservice.feathers)
         
 
 
         PowershellPlugin.SysInfosRef.chassis().then((infos)=>{
+          console.log("Chassis info :",infos)
+        })
+
+        PowershellPlugin.SysInfosRef.system().then((infos)=>{
           console.log("System info :",infos)
         })
         
+        /*
         //Get-ADDomainController –Discover
         //if ((Get-Module -ListAvailable -Name "ActiveDirectory") ) { write-output $true } else { write-output $false }
         await this.presentLoading();
-        PowershellPlugin.runPowerShell(`Import-Module -Name ActiveDirectory`).then(async (value) => {
+        PowershellPlugin.runPowerShell(`Get-ADDomainController -Discover|convertto-json`).then(async (value) => {
           await this.hideLoading();
           console.log("Get-ADDomain :",value);
         }).catch(async (err) => {
@@ -60,7 +68,7 @@ export class AppComponent {
           console.log("Get-ADDomain Error :",err);
         })
 
-             
+         */    
       }
     });
   }

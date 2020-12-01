@@ -1,0 +1,29 @@
+<ion-card>
+  <ion-card-header>
+    <ion-item class="ion-no-padding">
+      <h4>{{obj.title}}</h4>
+    <ion-button slot="end"  fill="solid" shape="round">
+      <ion-icon slot="icon-only" name="build-outline"></ion-icon>
+    </ion-button>
+    </ion-item>
+    <ion-card-subtitle> {{obj.desc}}</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+   {{obj.cmd}}
+   <ion-row  *ngFor="let arg of obj.args; let i = index">
+     <ion-col  size="12">
+       <ion-item>
+         <ion-label  position="stacked">Argument ({{i+1}}): arg{{i+1}}</ion-label>
+        <div [id]="'divinput'+i"><ion-input [id]="'cmdinput'+i" type="text"  [(ngModel)]="arg[i]" [value]="arg[i]" autofocus="false"></ion-input></div>
+          
+        </ion-item>
+     </ion-col>
+   </ion-row>
+  </ion-card-content>
+  <ion-item>
+    <ion-button (click)="onRunCmd($event)">
+      <ion-icon slot="start" name="caret-forward-outline"></ion-icon>
+      Exécuter
+    </ion-button>
+  </ion-item>
+</ion-card>

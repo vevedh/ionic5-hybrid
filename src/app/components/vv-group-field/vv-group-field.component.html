@@ -1,0 +1,28 @@
+<ion-row>
+  <ion-col [size]="field.className" *ngFor="let field of field.fieldGroup; let i = index" [ngClass]="active(i)">
+
+    <ng-container [ngSwitch]="field.type">
+      <formly-field *ngSwitchCase="'input'"
+        [model]="field.model"
+        [form]="field.form"
+        [field]="field"
+        [options]="options">
+      </formly-field>
+      <formly-field *ngSwitchCase="'select'"
+        [model]="field.model"
+        [form]="field.form"
+        [field]="field"
+        [options]="options">
+      </formly-field>
+      <formly-field *ngSwitchCase="'textarea'"
+        [model]="field.model"
+        [form]="field.form"
+        [field]="field"
+        [options]="options">
+      </formly-field>
+
+    </ng-container>
+
+  </ion-col>
+</ion-row>
+      

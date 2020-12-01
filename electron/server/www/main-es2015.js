@@ -81,13 +81,19 @@ let AppComponent = class AppComponent {
             this.splashScreen.hide();
             if (_capacitor_core__WEBPACK_IMPORTED_MODULE_7__["Capacitor"].platform == "electron") {
                 console.log("Capacitor Electron chargé!", _capacitor_core__WEBPACK_IMPORTED_MODULE_7__["Plugins"]);
-                console.log("System info :", PowershellPlugin.SysInfosRef);
-                /*
-                await this.presentLoading();
-                PowershellPlugin.runPowerShell(`Get-Process | convertTo-Json`).then(async (value) => {
-                  await this.hideLoading();
-                  console.log("Get-Process :",value);
-                }) */
+                PowershellPlugin.SysInfosRef.chassis().then((infos) => {
+                    console.log("System info :", infos);
+                });
+                //Get-ADDomainController –Discover
+                //if ((Get-Module -ListAvailable -Name "ActiveDirectory") ) { write-output $true } else { write-output $false }
+                yield this.presentLoading();
+                PowershellPlugin.runPowerShell(`Import-Module -Name ActiveDirectory`).then((value) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                    yield this.hideLoading();
+                    console.log("Get-ADDomain :", value);
+                })).catch((err) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                    yield this.hideLoading();
+                    console.log("Get-ADDomain Error :", err);
+                }));
             }
         }));
     }

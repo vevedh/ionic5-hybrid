@@ -1,17 +1,30 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
+    <ion-title class="ion-text-center">
+      Infos du poste de la CACEM
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="false" ion-padding>
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">Infos du poste de la CACEM</ion-title>
     </ion-toolbar>
   </ion-header>
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="fields" >
+    <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form" ></formly-form>
+    <br>
+    
+    <ion-row>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+      <ion-col  size="12" class="ion-text-center">
+        <ion-button type="submit"  fill="solid" shape="round" [disabled]="!form.valid">
+          <ion-icon slot="start" name="checkmark-circle"></ion-icon>
+          Envoyez à la DSI
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+ 
 </ion-content>

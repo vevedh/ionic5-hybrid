@@ -1,0 +1,347 @@
+<ion-row>
+  <ion-col [size]="12">
+    <ion-item color="primary" [hidden]="!field.templateOptions?.editorMode">
+      <ion-label>
+        Ce formulaire {{(editable)?'(mode Edition)':''}} a {{nbLignes}} champs
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-label>Editer </ion-label>
+        <ion-toggle [(ngModel)]="editable" (ionChange)="changeEditable($event)" color="light"></ion-toggle>
+
+      </ion-buttons>
+    </ion-item>
+    <ion-toolbar lines="none" [hidden]="!editable">
+      <!-- si non creation d'une nouvelle table -->
+      <ion-buttons slot="start" [hidden]="!newdb">    
+          <ion-label  class="ion-text-nowrap"><u>Champs :</u></ion-label>
+          <ion-select #chp id="chp" *ngIf="(champs?.length>0)" [(ngModel)]="currentChp" multiple="false"
+            placeholder="Sélectionner un champ" (ionChange)="changeDbKey($event)" >
+            <ion-select-option *ngFor="let champ of champs" [value]="champ.value"><ion-label>{{champ.label}}</ion-label>
+            </ion-select-option>
+          </ion-select>
+          <ion-button (click)="addLigne()">
+            <ion-icon slot="start" name="add-circle"></ion-icon>
+            Ajouter
+          </ion-button>
+          <ion-button (click)="addKey()" size="small">
+            Liste
+            <ion-icon name="code-working-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        
+      </ion-buttons>
+      
+    </ion-toolbar>
+    <div class="formly-drag-drop" (cdkDropListDropped)="drop($event)" cdkDropList>
+      <!-- block en mode edition -->
+      <div #editblock [ngClass]="(editable)?'editblock':''" *ngFor="let field of field.fieldGroup;let row = index;"
+       cdkDrag [cdkDragDisabled]="!editable">
+        <div *ngIf="editable" class="dragparent ion-no-margin ion-no-padding">
+
+            <ion-toolbar color="light">
+              <div class="example-handle" cdkDragHandle>
+              <ion-icon slot="start" name="apps"></ion-icon>
+            </div>
+            <ion-buttons slot="start">
+
+
+              <!--selection du type de control formulaire-->
+              <ion-icon slot="icon-only" [name]="getIcon(field.type)"></ion-icon>
+              <ion-select [value]="field.type" multiple="false" placeholder="Select type" interface="popover"
+                (ionChange)="changeType($event,row,field)">
+                <ion-select-option *ngFor="let ctype of compTypes" [value]="ctype.value">
+                  <ion-note>{{ctype.viewValue}}</ion-note>
+                </ion-select-option>
+              </ion-select>
+            </ion-buttons>
+            <ion-buttons slot="end">
+              <!-- si non group -->
+              <ion-label *ngIf="(champs?.length>0) && (field.type!='group')">Champ :</ion-label>
+              <ion-select *ngIf="(champs?.length>0) && (field.type!='group')" [value]="field.key" multiple="false"
+                placeholder="Select key" (ionChange)="changeKey($event,row,field)">
+                <ion-select-option *ngFor="let champ of champs" [value]="champ.value">{{champ.label}}
+                </ion-select-option>
+              </ion-select>
+              <!-- si group -->
+              <ion-label *ngIf="field.type=='group'">Cols :{{field.fieldGroup.length}}</ion-label>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-list-header>
+            <ion-label><u>Apercu :</u></ion-label>
+          </ion-list-header>
+
+        </div>
+
+
+        <ng-container [ngSwitch]="field.type">
+
+
+
+          <formly-field *ngSwitchCase="'input'" [model]="field.model" [form]="form" [field]="field" [options]="options"
+            [hidden]="field.hide">
+          </formly-field>
+          
+          <ion-item *ngSwitchCase="'select'" [lines]="field.templateOptions.itemLines">
+            <ion-label [position]="field.templateOptions.labelPosition">
+              {{ field.templateOptions.label }}
+              <span *ngIf="field.templateOptions.required && field.templateOptions.hideRequiredMarker !== true">*</span>
+            </ion-label>
+            <ng-container >
+              <ion-select
+                [formControl]="field.formControl"
+                [compareWith]="field.templateOptions.compareWith"
+                [ionFormlyAttributes]="field"
+                [multiple]="field.templateOptions.multiple"
+                [interface]="field.templateOptions.interface"
+                [okText]="field.templateOptions.okText"
+                [cancelText]="field.templateOptions.cancelText"
+              >
+                <ion-select-option *ngFor="let option of field.templateOptions.options" [value]="option.value" [disabled]="option.disabled">
+                  {{ option.label }}
+                </ion-select-option>
+              </ion-select>
+            </ng-container>
+          </ion-item>
+          <!--<formly-field *ngSwitchCase="'select'" [model]="field.model" [form]="form" [field]="field" [options]="options"
+            [hidden]="field.hide">
+          </formly-field>-->
+          <formly-field *ngSwitchCase="'radio'" [model]="field.model" [form]="form" [field]="field"
+            [options]="options" [hidden]="field.hide">
+          </formly-field>
+          <formly-field *ngSwitchCase="'textarea'" [model]="field.model" [form]="form" [field]="field"
+            [options]="options" [hidden]="field.hide">
+          </formly-field>
+          <formly-field *ngSwitchCase="'group'" [model]="field.model" [form]="form" [field]="field" [options]="options"
+            [hidden]="field.hide">
+          </formly-field>
+
+        </ng-container>
+        <!-- Onglet propriete si nom type group -->
+        <ion-segment *ngIf="editable && (field.type!='group')" value="sproprietes" (ionChange)="segmentChanged($event)"  [(ngModel)]="field.templateOptions.segment">
+          <ion-segment-button value="sproprietes">
+            <ion-label>Propriétés</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="svalidation">
+            <ion-label>Validation</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <!-- Onglet propriete si type group pointe sur field.fieldGroup[field.templateOptions.currentIndexGroup] -->
+        <ion-segment *ngIf="editable && (field.type=='group')" value="sproprietes" (ionChange)="segmentChanged($event)"  [(ngModel)]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.segment">
+          <ion-segment-button value="sproprietes">
+            <ion-label>Propriétés</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="svalidation">
+            <ion-label>Validation</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <!--  card si sur onglet propriete et type group -->
+        <ion-card *ngIf="editable && ((field.type=='group')?field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.segment==='sproprietes':field.templateOptions.segment==='sproprietes')" class="ion-no-margin ion-no-padding" color="light">
+          <ion-toolbar *ngIf="(field.type=='group')" color="light" class="ion-no-margin ion-no-padding">
+            <ion-buttons slot="end">
+              <ion-label *ngIf="(champs?.length>0)"><u><b>Champ :</b></u></ion-label>
+              <ion-select *ngIf="(champs?.length>0)" [value]="field.fieldGroup[field.templateOptions.currentIndexGroup].key" multiple="false"
+                placeholder="Select key" (ionChange)="changeGrpKey($event,row,field)">
+                <ion-select-option *ngFor="let champ of champs" [value]="champ.value">{{champ.label}}
+                </ion-select-option>
+              </ion-select>
+              <ion-button (click)="moinsGrpCursor(row)"><!--(click)="onClick()"-->
+                <ion-icon slot="icon-only" name="caret-back"></ion-icon>
+              </ion-button>
+              <ion-label>{{getCursor(row)}}</ion-label>
+              <ion-button (click)="plusGrpCursor(row)"><!--(click)="onClick()"-->
+                <ion-icon slot="icon-only" name="caret-forward"></ion-icon>
+              </ion-button>
+              <ion-button  (click)="addRowField(row)" >
+                <ion-icon slot="start" name="add-circle" ></ion-icon>
+              </ion-button>
+              
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-card-content>
+            <ion-row class="ion-no-margin">
+              <ion-col size="12" class="ion-no-padding">
+
+                <ion-label><u>Texte :</u></ion-label>
+                  <ion-input type="text" [(ngModel)]="field.templateOptions.label" [value]="field.templateOptions.label">
+                  <ion-input *ngIf="(field.type=='group')" type="text" [(ngModel)]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.label" [value]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.label"></ion-input>
+                </ion-input>
+
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-no-margin">
+              <ion-col size="12" class="ion-no-padding">
+
+                <ion-label><u>Texte par défaut :</u></ion-label>
+                  <ion-input type="text" [(ngModel)]="field.templateOptions.placeholder" [value]="field.templateOptions.placeholder">
+                  <ion-input *ngIf="(field.type=='group')" type="text" [(ngModel)]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.placeholder" [value]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.placeholder"></ion-input>
+                </ion-input>
+
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-no-margin">
+              <ion-col size="12" class="ion-no-padding">
+
+                <ion-label><u>Texte description :</u></ion-label>
+                  <ion-input type="text" [(ngModel)]="field.templateOptions.description" [value]="field.templateOptions.description">
+                  <ion-input *ngIf="(field.type=='group')" type="text" [(ngModel)]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.description" [value]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.description"></ion-input>
+                </ion-input>
+
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-no-margin" *ngIf="(field.type!='group')">
+              <ion-col size="12" class="ion-no-padding">
+                <ion-item>
+                  <ion-label>Position</ion-label>
+                  <ion-select [value]="field.templateOptions.labelPosition" multiple="false"  [(ngModel)]="field.templateOptions.labelPosition">
+                    <ion-select-option value="stacked">Stacked</ion-select-option>
+                    <ion-select-option value="floating">Floating</ion-select-option>
+                    <ion-select-option value="fixed">Fixed</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <!--(field.type=='group')?field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.labelPosition:-->
+            <ion-row class="ion-no-margin" *ngIf="(field.type=='group')">
+              <ion-col size="12" class="ion-no-padding">
+                <ion-item>
+                  <ion-label>Position</ion-label>
+                  <ion-select [value]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.labelPosition" multiple="false"  [(ngModel)]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.labelPosition">
+                    <ion-select-option value="stacked">Stacked</ion-select-option>
+                    <ion-select-option value="floating">Floating</ion-select-option>
+                    <ion-select-option value="fixed">Fixed</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" class="ion-no-padding ion-no-margin">
+                <ng-container *ngIf="editable && (field.type!='group')" [ngSwitch]="field.type">
+                  
+                  <ion-list *ngSwitchCase="'select'">
+                    <ion-item>
+                      <ion-label>Options :</ion-label>
+                    </ion-item>
+                    <ion-item *ngFor="let option of field.templateOptions.options; let i = index; let size = count">
+                      <ion-label>{{i}} : </ion-label>
+                      <ion-input  type="text" [placeholder]="' option'" [(ngModel)]="option.label" [value]="option.label"
+                      (ionChange)="chgOptions($event,row,i,size)" (ionBlur)="chgOptionBlur($event,row,i)"></ion-input><!--(ionInput)="chgOptions($event,row,i,size)" (ionBlur)="chgOptionBlur($event,row,i)"-->
+                      <ion-button (click)="onAddOption(row,size)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                      </ion-button>
+                      <ion-button (click)="onDelOption(row,i)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </ion-list>
+                  <ion-list *ngSwitchCase="'radio'">
+                    <ion-item>
+                      <ion-label>Options :</ion-label>
+                    </ion-item>
+                    <ion-item *ngFor="let option of field.templateOptions.options; let i = index; let size = count">
+                      <ion-label>{{i}} :</ion-label>
+                      <ion-input type="text" [placeholder]="' option'" [(ngModel)]="option.label"
+                         ></ion-input><!-- (click)="chgOptions($event,row,i,size)" (ionBlur)="chgOptionBlur($event)"-->
+                      <ion-button (click)="onAddOption(row,size)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                      </ion-button>
+                      <ion-button (click)="onDelOption(row,i)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </ion-list>
+                </ng-container>
+                <ng-container *ngIf="editable && (field.type=='group')" [ngSwitch]="field.type">
+                  <ion-list *ngSwitchCase="'select'">
+                    <ion-item>
+                      <ion-label>Options :</ion-label>
+                    </ion-item>
+                    <ion-item *ngFor="let option of field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.options; let i = index; let size = count">
+                      <ion-label>{{i}} :</ion-label>
+                      <ion-input type="text" [placeholder]="' option'" [(ngModel)]="option.label"
+                        (ionChange)="chgOptions($event,row,i,size)" (ionBlur)="chgOptionBlur($event)"></ion-input>
+                      <ion-button (click)="onAddOption(row,size)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                      </ion-button>
+                      <ion-button (click)="onDelOption(row,i)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </ion-list>
+                  <ion-list *ngSwitchCase="'radio'">
+                    <ion-item>
+                      <ion-label>Options :</ion-label>
+                    </ion-item>
+                    <ion-item *ngFor="let option of field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.options; let i = index; let size = count">
+                      <ion-label>{{i}} :</ion-label>
+                      <ion-input type="text" [placeholder]="' option'" [(ngModel)]="option.label"
+                        (ionChange)="chgOptions($event,row,i,size)" (ionBlur)="chgOptionBlur($event)"></ion-input>
+                      <ion-button (click)="onAddOption(row,size)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                      </ion-button>
+                      <ion-button (click)="onDelOption(row,i)" fill="clear" shape="round">
+                        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </ion-list>
+                </ng-container>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" class="ion-no-padding ion-no-margin">
+                <ion-item lines="none" class="ion-no-padding ion-no-margin">
+                  <ion-buttons slot="end" *ngIf="(field.type!='group')">
+                    <ion-label>Cacher :</ion-label>
+                    <ion-toggle (ionChange)="onVisible($event,row,null)" [checked]="field.hide"></ion-toggle>
+
+                    <ion-label>Obligatoire :</ion-label>
+                    <ion-toggle (ionChange)="onRequire($event,row,null)" [checked]="field.templateOptions.required"
+                      [hidden]="field.hide"></ion-toggle>
+                    <ion-button size="small" (click)="remove(row,null)" fill="clear">
+                      <!-- (click)="onClick()" -->
+                      <ion-icon slot="icon-only" name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                  <ion-buttons slot="end" *ngIf="(field.type=='group')">
+                    <ion-label>Cacher :</ion-label>
+                    <ion-toggle (ionChange)="onVisible($event,row,field.templateOptions.currentIndexGroup)" [checked]="field.fieldGroup[field.templateOptions.currentIndexGroup].hide"></ion-toggle>
+
+                    <ion-label>Obligatoire :</ion-label>
+                    <ion-toggle (ionChange)="onRequire($event,row,field.templateOptions.currentIndexGroup)" [checked]="field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.required"
+                      [hidden]="field.fieldGroup[field.templateOptions.currentIndexGroup].hide"></ion-toggle>
+                    <ion-button size="small" (click)="remove(row,field.templateOptions.currentIndexGroup)" >
+                      <!-- (click)="onClick()" -->
+                      <ion-icon  name="trash" size="small"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                </ion-item>
+
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="editable && ((field.type=='group')?field.fieldGroup[field.templateOptions.currentIndexGroup].templateOptions.segment==='svalidation':field.templateOptions.segment==='svalidation')" class="ion-no-margin ion-no-padding" color="light">
+          <ion-card-header>
+            <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
+            <ion-card-title>Awesome Title</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Awesome content
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+  </ion-col>
+</ion-row>
+<ion-footer *ngIf="editable">
+  <ion-toolbar>
+    
+    <ion-buttons slot="end">
+      <ion-button (click)="onSave()" size="small" fill="solid" color="primary">
+        Memoriser
+      </ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
